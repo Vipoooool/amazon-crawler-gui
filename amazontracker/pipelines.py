@@ -9,6 +9,41 @@ from scrapy.http.request import Request
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from scrapy.pipelines.images import ImagesPipeline
+import pymongo
+from urllib.parse import quote_plus
+
+class MongoPipeline:
+
+    collection_name = 'products'
+
+    def __init__(self, host,  port, user, passwd, db_name):
+        self.host = host
+        self.port = port
+        self.user = user
+        self.passwd = passwd
+        self.db_name = db_name
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            host = crawler.settings.get('MONGO_HOST', 'localhost'),
+            port = crawler.settings.get('MONGO_PORT', '27017'),
+            user = crawler.settings.get('MONGO_USER', None),
+            passwd = crawler.settings.get('MONGO_PASS', None),
+            db_name = crawler.settings.get('MONGO_DB', 'items')
+        )
+
+    def open_spider(self, spider):
+        mongo_uri = f'mongodb://{self.user}:{quote_plus(self.passwd)}@{self.host}:{self.port}'
+        self.client = pymongo.MongoClient(mongo_uri)
+        self.db = self.client[self.db_name]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        return item
 
 class AmazonImagePipeline(ImagesPipeline):
     # DEFAULT_IMAGES_URLS_FIELD = 'product_image'

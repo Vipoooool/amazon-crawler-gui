@@ -64,13 +64,21 @@ ROBOTSTXT_OBEY = False
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     # 'scrapy.pipelines.images.ImagesPipeline': 300,
-   'amazontracker.pipelines.AmazonImagePipeline': 300,
+   'amazontracker.pipelines.MongoPipeline': 320,
+   'amazontracker.pipelines.AmazonImagePipeline': 310,
 }
 
 # Image pipeline related settings
 # See https://docs.scrapy.org/en/latest/topics/media-pipeline.html
 # IMAGES_URLS_FIELD = 'product_image'
 IMAGES_STORE = '.'
+
+# Database pipeline
+MONGO_HOST = 'localhost'
+MONGO_PORT = 27017
+MONGO_USER = 'root'
+MONGO_PASS = 'pass'
+MONGO_DB = 'amazon'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

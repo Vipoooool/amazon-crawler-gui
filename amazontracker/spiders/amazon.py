@@ -11,7 +11,7 @@ class AmazonSpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls[:]:
-            yield scrapy.Request(url, callback=self.parse_detail)
+            yield scrapy.Request(url, callback=self.parse)
 
     def parse(self, response):
         product_urls = response.css("div.a-section.a-spacing-none h2.a-spacing-none a.a-link-normal::attr(href)").getall() or response.css("div.a-row.a-spacing-mini div.a-row.a-spacing-none a.a-link-normal::attr(href)").getall() #or response.css("div.a-section.a-spacing-none span.rush-component a.a-link-normal::attr(href)").getall()
